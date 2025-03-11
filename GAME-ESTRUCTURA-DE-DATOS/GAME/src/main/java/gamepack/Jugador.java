@@ -9,6 +9,10 @@ package gamepack;
  * @author Fabia
  */
 
+/**
+ * Clase que representa a un jugador en el juego.
+ */
+
 public class Jugador {
     private String nombre;
     private int posicion;
@@ -30,4 +34,3 @@ public class Jugador {
         this.posicion = posicion;
     }
 }
-

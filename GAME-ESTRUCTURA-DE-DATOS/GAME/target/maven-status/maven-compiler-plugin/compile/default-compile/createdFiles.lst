@@ -1,5 +1,6 @@
-gamepack\Cola.class
+gamepack\ColaJugadores.class
+gamepack\PilaPremios.class
 gamepack\Jugador.class
-gamepack\Nodo.class
-gamepack\Pila.class
+gamepack\NodoJugador.class
 gamepack\GAME.class
+gamepack\NodoPremio.class

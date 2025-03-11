@@ -8,14 +8,19 @@ package gamepack;
  *
  * @author Fabia
  */
+
 import javax.swing.JOptionPane;
 import java.util.Random;
 
+/**
+ * Clase principal del juego de carreras.
+ */
 public class GAME {
-    private static Cola<Jugador> jugadores = new Cola<>();
-    private static Pila<String> premios = new Pila<>();
-    private static Pila<String> castigos = new Pila<>();
+    private static ColaJugadores jugadores = new ColaJugadores();
+    private static PilaPremios premios = new PilaPremios();
+    private static PilaPremios castigos = new PilaPremios();
     private static Random random = new Random();
+    private static final String VERSION = "1.0.1";
 
     public static void main(String[] args) {
         inicializarPremiosYCastigos();
@@ -23,14 +28,15 @@ public class GAME {
     }
 
     private static void inicializarPremiosYCastigos() {
-        premios.apilar("+2");
-        premios.apilar("+8");
-        premios.apilar("+0");
-        
-        castigos.apilar("-3");
-        castigos.apilar("=1");
-        castigos.apilar("-5");
+        premios.push("+2");
+        premios.push("+8");
+        premios.push("+0");
+
+        castigos.push("-3");
+        castigos.push("-1");
+        castigos.push("-5");
     }
+    
 
     private static void mostrarMenu() {
         int opcion;
@@ -41,7 +47,10 @@ public class GAME {
                 "2. Iniciar juego\n" +
                 "3. Listar jugadores\n" +
                 "4. Listar premios/castigos\n" +
-                "5. Salir\n" +
+                "5. Mantener Pilas\n" +
+                "6. Eliminar jugador\n" +
+                "7. Ayuda\n" +
+                "8. Salir\n" +
                 "Elija una opción:"));
 
             switch (opcion) {
@@ -49,10 +58,13 @@ public class GAME {
                 case 2 -> jugar();
                 case 3 -> listarJugadores();
                 case 4 -> listarPremiosYCastigos();
-                case 5 -> JOptionPane.showMessageDialog(null, "Juego terminado.");
+                case 5 -> mantenerPilas();
+                case 6 -> salirJugador();
+                case 7 -> mostrarAyuda();
+                case 8 -> JOptionPane.showMessageDialog(null, "Juego terminado.");
                 default -> JOptionPane.showMessageDialog(null, "Opción inválida.");
             }
-        } while (opcion != 5);
+        } while (opcion != 8);
     }
 
     private static void registrarJugadores() {
@@ -64,51 +76,25 @@ public class GAME {
     }
 
     private static void listarJugadores() {
-        if (jugadores.estaVacia()) {
-            JOptionPane.showMessageDialog(null, "No hay jugadores registrados.");
-            return;
-        }
-
-        StringBuilder lista = new StringBuilder("Lista de Jugadores:\n");
-        Cola<Jugador> temp = new Cola<>();
-
-        while (!jugadores.estaVacia()) {
-            Jugador jugador = jugadores.desencolar();
-            lista.append(jugador.getNombre()).append("\n");
-            temp.encolar(jugador);
-        }
-
-        while (!temp.estaVacia()) {
-            jugadores.encolar(temp.desencolar());
-        }
-
-        JOptionPane.showMessageDialog(null, lista.toString());
+        JOptionPane.showMessageDialog(null, jugadores.listarJugadores());
     }
 
     private static void listarPremiosYCastigos() {
-        StringBuilder lista = new StringBuilder("Premios:\n");
-        Pila<String> tempPremios = new Pila<>();
-        while (!premios.estaVacia()) {
-            String premio = premios.desapilar();
-            lista.append(premio).append("\n");
-            tempPremios.apilar(premio);
-        }
-        while (!tempPremios.estaVacia()) {
-            premios.apilar(tempPremios.desapilar());
-        }
+        JOptionPane.showMessageDialog(null, premios.listar() + "\n" + castigos.listar());
+    }
 
-        lista.append("\nCastigos:\n");
-        Pila<String> tempCastigos = new Pila<>();
-        while (!castigos.estaVacia()) {
-            String castigo = castigos.desapilar();
-            lista.append(castigo).append("\n");
-            tempCastigos.apilar(castigo);
-        }
-        while (!tempCastigos.estaVacia()) {
-            castigos.apilar(tempCastigos.desapilar());
-        }
+    private static void mantenerPilas() {
+        JOptionPane.showMessageDialog(null, "Estado actual de las Pilas:\n" + "Premios: " + premios.listar() + "\nCastigos: " + castigos.listar());
+    }
 
-        JOptionPane.showMessageDialog(null, lista.toString());
+    private static void salirJugador() {
+        String nombre = JOptionPane.showInputDialog("Ingrese el nombre del jugador que desea eliminar:");
+        boolean eliminado = jugadores.eliminarJugador(nombre);
+        if (eliminado) {
+            JOptionPane.showMessageDialog(null, nombre + " ha salido del juego.");
+        } else {
+            JOptionPane.showMessageDialog(null, "Jugador no encontrado en la lista.");
+        }
     }
 
     private static void jugar() {
@@ -121,20 +107,31 @@ public class GAME {
         int dado1 = random.nextInt(6) + 1;
         int dado2 = random.nextInt(6) + 1;
         int total = dado1 + dado2;
+        int nuevaPosicion = jugador.getPosicion() + total;
 
-    
-        JOptionPane.showMessageDialog(null, jugador + " sacó " + dado1 + " y " + dado2 + ". Posicion Actual: " + total);
+        JOptionPane.showMessageDialog(null, jugador.getNombre() + " sacó " + dado1 + " y " + dado2 + ".\n" +
+                "Posición Actual: " + jugador.getPosicion() + " -> Nueva Posición: " + nuevaPosicion);
+
+        jugador.setPosicion(nuevaPosicion);
 
         if (total % 2 == 0) {
-            JOptionPane.showMessageDialog(null, "Obtuviste un número par, debes tomar un premio de la pila. " + "Suerte!!");
-            JOptionPane.showMessageDialog(null, "Premio Avanza: " + premios.desapilar() + " Casillas.");
-            JOptionPane.showMessageDialog(null, "Pocicion Actual: " + total);
+            String premio = premios.pop();
+            int valorPremio = Integer.parseInt(premio);
+            jugador.setPosicion(jugador.getPosicion() + valorPremio);
+            JOptionPane.showMessageDialog(null, "Obtuviste un número par, debes tomar un premio de la pila. \nPremio: " + premio +
+                    "\nNueva Posición: " + jugador.getPosicion());
         } else {
-            JOptionPane.showMessageDialog(null, "Obtuviste un número impar, debes tomar un castigo de la pila. " + "Mejor suerte la próxima vez!!");
-            JOptionPane.showMessageDialog(null, "Castigo Retrocede: " + castigos.desapilar() + " Casillas.");
-            JOptionPane.showMessageDialog(null, "Pocicion Actual: " + total);
+            String castigo = castigos.pop();
+            int valorCastigo = Integer.parseInt(castigo);
+            jugador.setPosicion(jugador.getPosicion() + valorCastigo);
+            JOptionPane.showMessageDialog(null, "Obtuviste un número impar, debes tomar un castigo de la pila. \nCastigo: " + castigo +
+                    "\nNueva Posición: " + jugador.getPosicion());
         }
 
         jugadores.encolar(jugador);
+    }
+
+    private static void mostrarAyuda() {
+        JOptionPane.showMessageDialog(null, "Juego de Carreras\nVersión: " + VERSION + "\nDesarrollado por: BUSTAX & CHELO & BRAYAN");
     }
 }

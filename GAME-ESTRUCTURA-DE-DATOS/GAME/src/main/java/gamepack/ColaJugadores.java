@@ -31,6 +31,16 @@ public class ColaJugadores {
             frente = nuevoNodo;
         }
     }
+    
+    public int contarJugadores() {
+    int contador = 0;
+    NodoJugador actual = frente;
+    while (actual != null) {
+        contador++;
+        actual = actual.siguiente;
+    }
+    return contador;
+}
 
     public Jugador desencolar() {
         if (frente == null) {
@@ -77,4 +87,21 @@ public class ColaJugadores {
         }
         return lista.toString();
     }
+    
+    public String[] obtenerNombresJugadores() {
+    int cantidad = contarJugadores();
+    if (cantidad == 0) {
+        return new String[0];
+    }
+
+    String[] nombres = new String[cantidad];
+    NodoJugador actual = frente;
+    int i = 0;
+    while (actual != null) {
+        nombres[i++] = actual.jugador.getNombre();
+        actual = actual.siguiente;
+    }
+    return nombres;
+}
+
 }

@@ -20,5 +20,23 @@ public class NodoJugador {
         this.jugador = jugador;
         this.siguiente = null;
     }
+
+    public Jugador getJugador() {
+        return jugador;
+    }
+
+    public void setJugador(Jugador jugador) {
+        this.jugador = jugador;
+    }
+
+    public NodoJugador getSiguiente() {
+        return siguiente;
+    }
+
+    public void setSiguiente(NodoJugador siguiente) {
+        this.siguiente = siguiente;
+    }
+    
+    
 }
 

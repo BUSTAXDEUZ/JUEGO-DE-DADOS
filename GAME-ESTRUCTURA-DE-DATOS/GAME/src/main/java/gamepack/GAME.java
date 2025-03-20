@@ -20,7 +20,9 @@ public class GAME {
     private static ColaPremios castigos = new ColaPremios();
     private static Random random = new Random();
     private static final String VERSION = "1.1.0";
-    private static final int POSICION_FINAL = 100;
+    private static int posicionMaxima; // Declarar la variable de posición máxima
+    private static final int META = 20;
+    
 
     /**
      * Método principal del programa.
@@ -62,33 +64,35 @@ public class GAME {
     /**
      * Muestra el menú principal con las opciones disponibles.
      */
-    private static void mostrarMenu() {
-        Object[] opciones = {"Iniciar Juego", "Editar Jugadores", "Listar Premios/Castigos", 
-                             "Mantener Pilas", "Ayuda", "Salir"};
+    // Modificar el método mostrarMenu para incluir la opción "Editar Partida"
+private static void mostrarMenu() {
+    Object[] opciones = {"Iniciar Juego", "Editar Partida", "Editar Jugadores", "Listar Premios/Castigos", 
+                         "Mantener Pilas", "Ver Tablero", "Ver Historial", "Ayuda", "Salir"};
 
-        int opcion;
-        do {
-            String jugadoresEnSala = jugadores.estaVacia() ? "No hay jugadores en la sala." : jugadores.listarJugadores();
+    int opcion;
+    do {
+        opcion = JOptionPane.showOptionDialog(null,
+                "JUEGO DE DADOS - MENÚ PRINCIPAL\nSeleccione una opción:",
+                "Menú de Juego",
+                JOptionPane.DEFAULT_OPTION,
+                JOptionPane.INFORMATION_MESSAGE,
+                null,
+                opciones,
+                opciones[0]);
 
-            opcion = JOptionPane.showOptionDialog(null,
-                    "JUEGO DE DADOS - MENÚ PRINCIPAL\n" + jugadoresEnSala + "\nSeleccione una opción:",
-                    "Menú de Juego",
-                    JOptionPane.DEFAULT_OPTION,
-                    JOptionPane.INFORMATION_MESSAGE,
-                    null,
-                    opciones,
-                    opciones[0]);
-
-            switch (opcion) {
-                case 0 -> jugar();
-                case 1 -> editarJugadores();
-                case 2 -> listarPremiosYCastigos();
-                case 3 -> mantenerPilas();
-                case 4 -> mostrarAyuda();
-                case 5 -> JOptionPane.showMessageDialog(null, "Juego terminado.");
-            }
-        } while (opcion != 5);
-    }
+        switch (opcion) {
+            case 0 -> jugar();
+            case 1 -> editarPartida(); // Nueva opción para editar partida
+            case 2 -> editarJugadores();
+            case 3 -> listarPremiosYCastigos();
+            case 4 -> mantenerPilas();
+            case 5 -> mostrarTableroConJugadores();
+            case 6 -> verHistorialJugador();
+            case 7 -> mostrarAyuda();
+            case 8 -> JOptionPane.showMessageDialog(null, "Juego terminado.");
+        }
+    } while (opcion != 8);
+}
 
     /**
      * Permite seleccionar la cantidad de jugadores y registrar sus nombres.
@@ -111,70 +115,63 @@ public class GAME {
         }
     }
 
-    /**
-     * Controla la mecánica del juego, incluyendo tiradas de dados, premios y castigos.
+    
+        /**
+     * Maneja la lógica del juego cuando un jugador lanza los dados.
+     */
+        /**
+     * Maneja la lógica del juego cuando un jugador lanza los dados.
      */
     private static void jugar() {
-        boolean ganadorEncontrado = false;
-
-        while (!ganadorEncontrado) {
-            if (jugadores.estaVacia()) {
-                JOptionPane.showMessageDialog(null, "No hay jugadores en la cola.");
-                return;
-            }
-
-            Jugador jugador = jugadores.desencolar();
-            int dado1 = random.nextInt(6) + 1;
-            int dado2 = random.nextInt(6) + 1;
-            int total = dado1 + dado2;
-            int nuevaPosicion = jugador.getPosicion() + total;
-
-            Object[] opciones = {"Continuar", "Volver al Menú"};
-            int seleccion = JOptionPane.showOptionDialog(null,
-                    jugador.getNombre() + " sacó " + dado1 + " y " + dado2 + ".\n" +
-                    "Posición Actual: " + jugador.getPosicion() + " -> Nueva Posición: " + nuevaPosicion,
-                    "Turno de " + jugador.getNombre(),
-                    JOptionPane.DEFAULT_OPTION,
-                    JOptionPane.INFORMATION_MESSAGE,
-                    null,
-                    opciones,
-                    opciones[0]);
-
-            if (seleccion == 1) {
-                jugadores.encolar(jugador);
-                return;
-            }
-
-            jugador.setPosicion(nuevaPosicion);
-
-            if (total % 2 == 0) {
-    String premio = premios.desencolarYReutilizar();
-    int valorPremio = Integer.parseInt(premio);
-    jugador.setPosicion(jugador.getPosicion() + valorPremio);
-    JOptionPane.showMessageDialog(null, "Premio: " + premio + "\nNueva Posición: " + jugador.getPosicion());
-} else {
-    String castigo = castigos.desencolarYReutilizar();
-
-    if (castigo.equals("-1")) {
-        jugador.setPosicion(1); // Si es "-1", vuelve a la posición 1
-        JOptionPane.showMessageDialog(null, "Castigo especial: Regresas a la posición 1.");
-    } else {
-        int valorCastigo = Integer.parseInt(castigo);
-        jugador.setPosicion(jugador.getPosicion() + valorCastigo);
-        JOptionPane.showMessageDialog(null, "Castigo: " + castigo + "\nNueva Posición: " + jugador.getPosicion());
-    }
-}
-
-
-            if (jugador.getPosicion() >= POSICION_FINAL) {
-                JOptionPane.showMessageDialog(null, jugador.getNombre() + " ha llegado a la meta y ha ganado el juego.");
-                ganadorEncontrado = true;
-                break;
-            }
-
-            jugadores.encolar(jugador);
+        if (jugadores.estaVacia()) {
+            JOptionPane.showMessageDialog(null, "No hay jugadores en la cola.");
+            return;
         }
+
+        Jugador jugador = jugadores.desencolar();
+        int dado1 = random.nextInt(6) + 1;
+        int dado2 = random.nextInt(6) + 1;
+        int total = dado1 + dado2;
+        int nuevaPosicion = jugador.getPosicion() + total;
+
+        // Validar si el jugador gana o rebota
+        if (nuevaPosicion >= META) {
+            int rebote = nuevaPosicion - META;
+            if (rebote == 0) {
+                JOptionPane.showMessageDialog(null,
+                        jugador.getNombre() + " ha ganado el juego!");
+                System.exit(0); // Terminar el juego
+            } else {
+                nuevaPosicion = META - rebote; // Rebote hacia atrás
+                JOptionPane.showMessageDialog(null,
+                        jugador.getNombre() + " se pasó de la meta y rebota a la posición " + nuevaPosicion);
+            }
+        }
+
+        // Registrar en la bitácora solo si la posición cambia
+        if (jugador.getPosicion() != nuevaPosicion) {
+            jugador.setPosicion(nuevaPosicion);
+        }
+
+        JOptionPane.showMessageDialog(null, jugador.getNombre() + " sacó " + dado1 + " y " + dado2 + ".\n" +
+                "Nueva Posición: " + jugador.getPosicion());
+
+        // Aplicar premios o castigos
+        if (total % 2 == 0) {
+            String premio = premios.desencolarYReutilizar();
+            int valorPremio = Integer.parseInt(premio);
+            jugador.setPosicion(jugador.getPosicion() + valorPremio);
+            JOptionPane.showMessageDialog(null, "Premio: " + premio + "\nNueva Posición: " + jugador.getPosicion());
+        } else {
+            String castigo = castigos.desencolarYReutilizar();
+            int valorCastigo = Integer.parseInt(castigo);
+            jugador.setPosicion(jugador.getPosicion() + valorCastigo);
+            JOptionPane.showMessageDialog(null, "Castigo: " + castigo + "\nNueva Posición: " + jugador.getPosicion());
+        }
+
+        jugadores.encolar(jugador); // El jugador vuelve a la cola para su próximo turno
     }
+
 
     /**
      * Muestra la lista de premios y castigos disponibles.
@@ -284,5 +281,73 @@ public class GAME {
             }
         }
     }
+       // Declarar la variable del tablero dentro de GAME.java
+    private static ListaCircular tablero = new ListaCircular();
 
+    /**
+     * Muestra el estado actual del tablero con los jugadores en sus posiciones.
+     */
+    private static void mostrarTableroConJugadores() {
+        tablero.mostrarTableroConJugadores(jugadores, META);
+    }
+        /**
+     * Permite ver el historial de movimientos de un jugador.
+     */
+    private static void verHistorialJugador() {
+        if (jugadores.estaVacia()) {
+            JOptionPane.showMessageDialog(null, "No hay jugadores en la partida.");
+            return;
+        }
+
+        String nombreJugador = JOptionPane.showInputDialog("Ingrese el nombre del jugador para ver su historial:");
+        Jugador jugador = jugadores.buscarJugador(nombreJugador);
+
+        if (jugador != null) {
+            jugador.verHistorial();
+        } else {
+            JOptionPane.showMessageDialog(null, "Jugador no encontrado.");
+        }
+    }
+    
+    // Agregar el método editarPartida
+private static void editarPartida() {
+    // Preguntar si se permite ingresar más jugadores
+    Object[] opcionesIngreso = {"Sí", "No"};
+    int permitirIngreso = JOptionPane.showOptionDialog(null,
+            "¿Permitir ingresar más jugadores después de iniciar el juego?",
+            "Permitir Ingreso",
+            JOptionPane.DEFAULT_OPTION,
+            JOptionPane.QUESTION_MESSAGE,
+            null,
+            opcionesIngreso,
+            opcionesIngreso[0]);
+
+    boolean permitirMasJugadores = (permitirIngreso == 0); // 0 es "Sí"
+
+    // Opciones para la posición máxima
+    Object[] opcionesPosicionMaxima = {20, 30, 40, 50, 60, 70, 80, 90, 100};
+    int seleccion = JOptionPane.showOptionDialog(null,
+            "Seleccione la posición máxima del laberinto:",
+            "Seleccionar Posición Máxima",
+            JOptionPane.DEFAULT_OPTION,
+            JOptionPane.QUESTION_MESSAGE,
+            null,
+            opcionesPosicionMaxima,
+            opcionesPosicionMaxima[0]);
+
+    if (seleccion >= 0) {
+        posicionMaxima = (int) opcionesPosicionMaxima[seleccion];
+        JOptionPane.showMessageDialog(null, "Partida editada con éxito.\n" +
+                "Permitir más jugadores: " + (permitirMasJugadores ? "Sí" : "No") + "\n" +
+                "Posición máxima: " + posicionMaxima);
+    } else {
+        JOptionPane.showMessageDialog(null, "No se seleccionó ninguna posición máxima.");
+    }
+}
+
+//    // Mostrar mensaje de confirmación
+//    JOptionPane.showMessageDialog(null, "Partida editada con éxito.\n" +
+//            "Permitir más jugadores: " + (permitirMasJugadores ? "Sí" : "No") + "\n" +
+//            "Posición máxima: " + posicionMaxima);
+//    }
 }

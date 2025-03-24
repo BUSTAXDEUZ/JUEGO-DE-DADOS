@@ -9,98 +9,110 @@ import javax.swing.JOptionPane;
  * @author Bustax, Chelo, Bryan
  */
 public class ListaCircular {
-    private NodoDoble Primero;
-    private NodoDoble Ultimo;
-    private int Tamaño;  // Número de posiciones en el juego
+    private NodoCircular primero;
+    private NodoCircular ultimo;
 
     public ListaCircular() {
-        this.Primero = null;
-        this.Ultimo = null;
-        this.Tamaño = 0;
+        this.primero = null;
+        this.ultimo = null;
     }
 
-    public NodoDoble getPrimero() {
-        return Primero;
+    public NodoCircular getPrimero() {
+        return primero;
     }
 
-    public void setPrimero(NodoDoble Primero) {
-        this.Primero = Primero;
+    public void setPrimero(NodoCircular primero) {
+        this.primero = primero;
     }
 
-    public NodoDoble getUltimo() {
-        return Ultimo;
+    public NodoCircular getUltimo() {
+        return ultimo;
     }
 
-    public void setUltimo(NodoDoble Ultimo) {
-        this.Ultimo = Ultimo;
-    }
-
-    public int getTamaño() {
-        return Tamaño;
-    }
-
-    public void setTamaño(int Tamaño) {
-        this.Tamaño = Tamaño;
+    public void setUltimo(NodoCircular ultimo) {
+        this.ultimo = ultimo;
     }
 
     public void agregarEstado(int posicion, String descripcion) {
-        NodoDoble Nuevo = new NodoDoble(posicion, descripcion);
-        if (Primero == null) {
-            Primero = Nuevo;
-            Ultimo = Nuevo;
-            Primero.setSiguiente(Primero); // La lista circular se cierra en el primer nodo
-            Primero.setAnterior(Primero);
+    // Crear un nuevo nodo con el jugador
+    Jugador nuevoJugador = new Jugador(descripcion);
+    nuevoJugador.setPosicion(posicion); // Establecer la posición del jugador
+    NodoCircular nuevo = new NodoCircular(nuevoJugador);
+
+    // Caso 1: La lista está vacía
+    if (this.getPrimero() == null) {
+        primero = nuevo;
+        ultimo = nuevo;
+        ultimo.setSiguiente(primero); // La lista circular se cierra en el primer nodo
+    } else {
+        // Caso 2: Insertar en la posición correcta
+        if (posicion <= primero.getJugador().getPosicion()) {
+            nuevo.setSiguiente(primero);
+            primero = nuevo;
+            ultimo.setSiguiente(primero);
+        } else if (posicion > ultimo.getJugador().getPosicion()) {
+            ultimo.setSiguiente(nuevo);
+            ultimo = nuevo;
+            ultimo.setSiguiente(primero);
         } else {
-            Ultimo.setSiguiente(Nuevo);
-            Nuevo.setAnterior(Ultimo);
-            Nuevo.setSiguiente(Primero); // Se cierra la lista circular
-            Primero.setAnterior(Nuevo);
-            Ultimo = Nuevo;
+            NodoCircular aux = primero;
+            while (aux.getSiguiente() != primero && aux.getSiguiente().getJugador().getPosicion() < posicion) {
+                aux = aux.getSiguiente();
+            }
+            nuevo.setSiguiente(aux.getSiguiente());
+            aux.setSiguiente(nuevo);
         }
-        Tamaño++;
     }
+}
 
     /**
      * Imprime el estado actual del juego con colores para las posiciones.
      */
     public void mostrarEstadoJuego() {
-    if (Primero == null) {
+        if (this.getPrimero() == null) {
         JOptionPane.showMessageDialog(null, "El juego aún no tiene estados.");
         return;
     }
-    
-    NodoDoble actual = Primero;
+
+    NodoCircular actual = this.getPrimero();
     int posicionActual = 1;
 
-    // Calcular los límites para los colores
-    int limiteVerde = (int) (Tamaño * 0.4);
-    int limiteAmarillo = (int) (Tamaño * 0.8);
-    
-    while (posicionActual <= Tamaño) {
-        String mensaje = "Posición " + actual.getPosicion() + ": ";
-        String color = "";
+    // Definir los límites para los colores
+    int limiteVerde = 8;  // Primer 40% de las posiciones
+    int limiteAmarillo = 16; // Segundo 40% de las posiciones
+
+    StringBuilder mensaje = new StringBuilder("Estado Actual del Juego:\n");
+
+    // Recorrer todas las posiciones del tablero
+    do {
+        String color;
 
         // Colorear según el rango con emojis
-        if (posicionActual <= limiteVerde) {
-            color = "🟢"; // Verde
-        } else if (posicionActual <= limiteAmarillo) {
-            color = "🟡"; // Amarillo
-        } else {
-            color = "🔴"; // Rojo
-        }
+        if (actual.getJugador() != null) {
+            // Obtener la posición del jugador
+            int posicionJugador = actual.getJugador().getPosicion();
 
-        // Imprimir información del jugador y premio/castigo
-        if (actual.getDescripcion().equals("VACIA")) {
-            mensaje += "VACIA";
-        } else {
-            mensaje += actual.getDescripcion(); // Aquí va el jugador, premio/castigo
-        }
+            // Determinar el color basado en la posición del jugador
+            if (posicionJugador <= limiteVerde) {
+                color = "🟢"; // Verde
+            } else if (posicionJugador <= limiteAmarillo) {
+                color = "🟡"; // Amarillo
+            } else {
+                color = "🔴"; // Rojo
+            }
 
-        // Mostrar el mensaje con el color correspondiente
-        System.out.println(color + " " + mensaje);
+            // Imprimir información del jugador
+            mensaje.append(color).append(" Posición ").append(posicionJugador).append(": ").append(actual.getJugador().getNombre().replace("ó", "o")).append("\n");
+        } else {
+            // Si no hay jugador en esta posición
+            mensaje.append("VACIA\n");
+        }
 
         actual = actual.getSiguiente();  // Moverse al siguiente nodo
         posicionActual++;
-    }
-  } 
+    } while (actual != this.getPrimero()); // Continuar hasta volver al primero
+
+    // Mostrar el estado del juego en un cuadro de diálogo
+    JOptionPane.showMessageDialog(null, mensaje.toString(), "Estado Actual del Juego", JOptionPane.INFORMATION_MESSAGE);
+  }
 }

@@ -8,14 +8,14 @@ import java.util.Random;
  * Maneja jugadores, el lanzamiento de dados y la administración de premios y castigos.
  * 
  * @author Bryan, Bustax, Chelo
- * @version 2.1.7
+ * @version 2.1.8
  */
 public class GAME {
     private static ColaJugadores jugadores = new ColaJugadores();
     private static ColaPremios premios = new ColaPremios();
     private static ColaPremios castigos = new ColaPremios();
     private static Random random = new Random();
-    private static final String VERSION = "1.1.0";
+    private static final String VERSION = "2.1.8";
     private static int posicionMaxima; // Declarar la variable de posición máxima
     private static final int META = 20;
     
@@ -120,53 +120,53 @@ private static void mostrarMenu() {
      */
     private static void jugar() {
         if (jugadores.estaVacia()) {
-            JOptionPane.showMessageDialog(null, "No hay jugadores en la cola.");
-            return;
-        }
-
-        Jugador jugador = jugadores.desencolar();
-        int dado1 = random.nextInt(6) + 1;
-        int dado2 = random.nextInt(6) + 1;
-        int total = dado1 + dado2;
-        int nuevaPosicion = jugador.getPosicion() + total;
-
-        // Validar si el jugador gana o rebota
-        if (nuevaPosicion >= META) {
-            int rebote = nuevaPosicion - META;
-            if (rebote == 0) {
-                JOptionPane.showMessageDialog(null,
-                        jugador.getNombre() + " ha ganado el juego!");
-                System.exit(0); // Terminar el juego
-            } else {
-                nuevaPosicion = META - rebote; // Rebote hacia atrás
-                JOptionPane.showMessageDialog(null,
-                        jugador.getNombre() + " se pasó de la meta y rebota a la posición " + nuevaPosicion);
-            }
-        }
-
-        // Registrar en la bitácora solo si la posición cambia
-        if (jugador.getPosicion() != nuevaPosicion) {
-            jugador.setPosicion(nuevaPosicion);
-        }
-
-        JOptionPane.showMessageDialog(null, jugador.getNombre() + " sacó " + dado1 + " y " + dado2 + ".\n" +
-                "Nueva Posición: " + jugador.getPosicion());
-
-        // Aplicar premios o castigos
-        if (total % 2 == 0) {
-            String premio = premios.desencolarYReutilizar();
-            int valorPremio = Integer.parseInt(premio);
-            jugador.setPosicion(jugador.getPosicion() + valorPremio);
-            JOptionPane.showMessageDialog(null, "Premio: " + premio + "\nNueva Posición: " + jugador.getPosicion());
-        } else {
-            String castigo = castigos.desencolarYReutilizar();
-            int valorCastigo = Integer.parseInt(castigo);
-            jugador.setPosicion(jugador.getPosicion() + valorCastigo);
-            JOptionPane.showMessageDialog(null, "Castigo: " + castigo + "\nNueva Posición: " + jugador.getPosicion());
-        }
-
-        jugadores.encolar(jugador); // El jugador vuelve a la cola para su próximo turno
+        JOptionPane.showMessageDialog(null, "No hay jugadores en la cola.");
+        return;
     }
+
+    Jugador jugador = jugadores.desencolar();
+    int dado1 = random.nextInt(6) + 1;
+    int dado2 = random.nextInt(6) + 1;
+    int total = dado1 + dado2;
+    int nuevaPosicion = jugador.getPosicion() + total;
+
+    // Validar si el jugador gana o rebota
+    if (nuevaPosicion >= META) {
+        int rebote = nuevaPosicion - META;
+        if (rebote == 0) {
+            JOptionPane.showMessageDialog(null, jugador.getNombre() + " ha ganado el juego!");
+            System.exit(0); // Terminar el juego
+        } else {
+            nuevaPosicion = META - rebote; // Rebote hacia atrás
+            JOptionPane.showMessageDialog(null, jugador.getNombre() + " se pasó de la meta y rebota a la posición " + nuevaPosicion);
+        }
+    }
+
+    // Actualizar la posición del jugador
+    jugador.setPosicion(nuevaPosicion);
+
+    // Agregar el estado del jugador a la lista circular
+    EstadoActual.agregarEstado(jugador.getPosicion(), jugador.getNombre());
+
+    JOptionPane.showMessageDialog(null, jugador.getNombre() + " sacó " + dado1 + " y " + dado2 + ".\n" +
+            "Nueva Posición: " + jugador.getPosicion());
+
+    // Aplicar premios o castigos
+    if (total % 2 == 0) {
+        String premio = premios.desencolarYReutilizar();
+        int valorPremio = Integer.parseInt(premio);
+        jugador.setPosicion(jugador.getPosicion() + valorPremio);
+        JOptionPane.showMessageDialog(null, "Premio: " + premio + "\nNueva Posición: " + jugador.getPosicion());
+    } else {
+        String castigo = castigos.desencolarYReutilizar();
+        int valorCastigo = Integer.parseInt(castigo);
+        jugador.setPosicion(jugador.getPosicion() + valorCastigo);
+        JOptionPane.showMessageDialog(null, "Castigo: " + castigo + "\nNueva Posición: " + jugador.getPosicion());
+    }
+
+    jugadores.encolar(jugador); // El jugador vuelve a la cola para su próximo turno
+}
+
 
 
     /**

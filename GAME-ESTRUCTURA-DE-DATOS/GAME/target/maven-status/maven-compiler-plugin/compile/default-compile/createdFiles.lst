@@ -1,5 +1,6 @@
 gamepack\ColaJugadores.class
 gamepack\ColaPremios.class
+gamepack\NodoCircular.class
 gamepack\ListaCircular.class
 gamepack\NodoJugador.class
 gamepack\Nodo.class

@@ -1,7 +1,4 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
+
 package gamepack;
 
 /**
@@ -13,6 +10,7 @@ public class Jugador {
     private String nombre;
     private int posicion;
     private ListaDobleMovimientos historial;
+    private ListaCircular Estado;
 
     /**
      * Constructor del jugador.
@@ -22,6 +20,7 @@ public class Jugador {
         this.nombre = nombre;
         this.posicion = 1; // Inicia en la posición 1
         this.historial = new ListaDobleMovimientos();
+        this.Estado = new ListaCircular();
     }
 
     public String getNombre() {
@@ -34,7 +33,7 @@ public class Jugador {
 
     public void setPosicion(int nuevaPosicion) {
         this.posicion = nuevaPosicion;
-        historial.agregarMovimiento(nuevaPosicion, "Movimiento en el tablero");
+        historial.agregarMovimiento(nuevaPosicion, "Movimiento del carro");
     }
 
     /**
@@ -42,5 +41,11 @@ public class Jugador {
      */
     public void verHistorial() {
         historial.verHistorial();
+        
     }
+    
+    public void verEstado() {
+        Estado.mostrarEstadoJuego();  
+    }
+    
 }

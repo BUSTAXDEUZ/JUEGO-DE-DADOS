@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- */
-
 package gamepack;
 
 import javax.swing.JOptionPane;
@@ -12,7 +8,7 @@ import java.util.Random;
  * Maneja jugadores, el lanzamiento de dados y la administración de premios y castigos.
  * 
  * @author Bryan, Bustax, Chelo
- * @version 1.1.0
+ * @version 2.1.7
  */
 public class GAME {
     private static ColaJugadores jugadores = new ColaJugadores();
@@ -66,8 +62,8 @@ public class GAME {
      */
     // Modificar el método mostrarMenu para incluir la opción "Editar Partida"
 private static void mostrarMenu() {
-    Object[] opciones = {"Iniciar Juego", "Editar Partida", "Editar Jugadores", "Listar Premios/Castigos", 
-                         "Mantener Pilas", "Ver Tablero", "Ver Historial", "Ayuda", "Salir"};
+    Object[] opciones = {"Iniciar Juego", "Editar Partida", "Editar/Añadir Jugadores", "Listar Premios/Castigos", 
+                         "Mantener Pilas", "Estado Actual Del Juego", "Ver Historial", "Ayuda", "Salir"};
 
     int opcion;
     do {
@@ -86,7 +82,7 @@ private static void mostrarMenu() {
             case 2 -> editarJugadores();
             case 3 -> listarPremiosYCastigos();
             case 4 -> mantenerPilas();
-            case 5 -> mostrarTableroConJugadores();
+            case 5 -> mostrarEstadoActual();
             case 6 -> verHistorialJugador();
             case 7 -> mostrarAyuda();
             case 8 -> JOptionPane.showMessageDialog(null, "Juego terminado.");
@@ -94,7 +90,7 @@ private static void mostrarMenu() {
     } while (opcion != 8);
 }
 
-    /**
+    /** 
      * Permite seleccionar la cantidad de jugadores y registrar sus nombres.
      */
     private static void seleccionarCantidadJugadores() {
@@ -282,15 +278,32 @@ private static void mostrarMenu() {
         }
     }
        // Declarar la variable del tablero dentro de GAME.java
-    private static ListaCircular tablero = new ListaCircular();
+    private static ListaCircular EstadoActual = new ListaCircular();
 
     /**
      * Muestra el estado actual del tablero con los jugadores en sus posiciones.
      */
-    private static void mostrarTableroConJugadores() {
-        tablero.mostrarTableroConJugadores(jugadores, META);
+    private static void mostrarEstadoActual() {
+       if (jugadores.estaVacia()) {
+        JOptionPane.showMessageDialog(null, "La partida aún no ha comenzado.");
+        return;
     }
-        /**
+
+    // Limpiar el estado actual del tablero
+    EstadoActual = new ListaCircular();
+
+    // Agregar los jugadores y sus posiciones al estado actual
+    NodoJugador actual = jugadores.frente; // Acceder al primer jugador en la cola
+    while (actual != null) {
+        // Agregar el estado del jugador a la lista circular
+        EstadoActual.agregarEstado(actual.jugador.getPosicion(), actual.jugador.getNombre());
+        actual = actual.siguiente; // Mover al siguiente jugador
+    }
+
+    // Mostrar el estado actual del juego
+    EstadoActual.mostrarEstadoJuego(); // Llamar al método de ListaCircular para mostrar el estado
+    }
+     /**
      * Permite ver el historial de movimientos de un jugador.
      */
     private static void verHistorialJugador() {

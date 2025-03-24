@@ -1,7 +1,4 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
+
 package gamepack;
 
 /**
@@ -14,7 +11,8 @@ package gamepack;
  */
 
 public class ColaJugadores {
-    private NodoJugador frente, finalCola;
+    NodoJugador frente;
+    private NodoJugador finalCola;
 
     public ColaJugadores() {
         this.frente = null;

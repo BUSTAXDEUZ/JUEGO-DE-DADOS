@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package gamepack;
 
 import javax.swing.JOptionPane;
@@ -13,59 +9,98 @@ import javax.swing.JOptionPane;
  * @author Bustax, Chelo, Bryan
  */
 public class ListaCircular {
-    private Nodo primero;
-    private Nodo ultimo;
+    private NodoDoble Primero;
+    private NodoDoble Ultimo;
+    private int Tamaño;  // Número de posiciones en el juego
 
     public ListaCircular() {
-        this.primero = null;
-        this.ultimo = null;
+        this.Primero = null;
+        this.Ultimo = null;
+        this.Tamaño = 0;
     }
 
-    public void insertar(int valor) {
-        Nodo nuevo = new Nodo(valor);
-        if (primero == null) {
-            primero = nuevo;
-            ultimo = nuevo;
-            ultimo.setSiguiente(primero);
+    public NodoDoble getPrimero() {
+        return Primero;
+    }
+
+    public void setPrimero(NodoDoble Primero) {
+        this.Primero = Primero;
+    }
+
+    public NodoDoble getUltimo() {
+        return Ultimo;
+    }
+
+    public void setUltimo(NodoDoble Ultimo) {
+        this.Ultimo = Ultimo;
+    }
+
+    public int getTamaño() {
+        return Tamaño;
+    }
+
+    public void setTamaño(int Tamaño) {
+        this.Tamaño = Tamaño;
+    }
+
+    public void agregarEstado(int posicion, String descripcion) {
+        NodoDoble Nuevo = new NodoDoble(posicion, descripcion);
+        if (Primero == null) {
+            Primero = Nuevo;
+            Ultimo = Nuevo;
+            Primero.setSiguiente(Primero); // La lista circular se cierra en el primer nodo
+            Primero.setAnterior(Primero);
         } else {
-            ultimo.setSiguiente(nuevo);
-            nuevo.setSiguiente(primero);
-            ultimo = nuevo;
+            Ultimo.setSiguiente(Nuevo);
+            Nuevo.setAnterior(Ultimo);
+            Nuevo.setSiguiente(Primero); // Se cierra la lista circular
+            Primero.setAnterior(Nuevo);
+            Ultimo = Nuevo;
         }
+        Tamaño++;
     }
 
-    public void mostrarTableroConJugadores(ColaJugadores jugadores, int meta) {
-        if (primero == null) {
-            JOptionPane.showMessageDialog(null, "El tablero aún no ha sido configurado.");
-            return;
-        }
-
-        StringBuilder tablero = new StringBuilder("ESTADO DEL TABLERO\n\n");
-        Nodo actual = primero;
-        do {
-            int posicion = actual.getValor();
-            String color = determinarZona(posicion, meta);
-            tablero.append(color).append(" Posición ").append(posicion).append(": ");
-
-            // Obtener jugadores en esta posición
-            String jugadoresEnPosicion = jugadores.obtenerJugadoresEnPosicion(posicion);
-            tablero.append(jugadoresEnPosicion.isEmpty() ? "VACIA" : jugadoresEnPosicion);
-            tablero.append("\n");
-
-            actual = actual.getSiguiente();
-        } while (actual != primero);
-
-        JOptionPane.showMessageDialog(null, tablero.toString(), "Estado del Tablero", JOptionPane.INFORMATION_MESSAGE);
+    /**
+     * Imprime el estado actual del juego con colores para las posiciones.
+     */
+    public void mostrarEstadoJuego() {
+    if (Primero == null) {
+        JOptionPane.showMessageDialog(null, "El juego aún no tiene estados.");
+        return;
     }
+    
+    NodoDoble actual = Primero;
+    int posicionActual = 1;
 
-    private String determinarZona(int posicion, int meta) {
-        double porcentaje = (double) posicion / meta * 100;
-        if (porcentaje <= 40) {
-            return "[🟢]";
-        } else if (porcentaje <= 80) {
-            return "[🟡]";
+    // Calcular los límites para los colores
+    int limiteVerde = (int) (Tamaño * 0.4);
+    int limiteAmarillo = (int) (Tamaño * 0.8);
+    
+    while (posicionActual <= Tamaño) {
+        String mensaje = "Posición " + actual.getPosicion() + ": ";
+        String color = "";
+
+        // Colorear según el rango con emojis
+        if (posicionActual <= limiteVerde) {
+            color = "🟢"; // Verde
+        } else if (posicionActual <= limiteAmarillo) {
+            color = "🟡"; // Amarillo
         } else {
-            return "[🔴]";
+            color = "🔴"; // Rojo
         }
+
+        // Imprimir información del jugador y premio/castigo
+        if (actual.getDescripcion().equals("VACIA")) {
+            mensaje += "VACIA";
+        } else {
+            mensaje += actual.getDescripcion(); // Aquí va el jugador, premio/castigo
+        }
+
+        // Mostrar el mensaje con el color correspondiente
+        System.out.println(color + " " + mensaje);
+
+        actual = actual.getSiguiente();  // Moverse al siguiente nodo
+        posicionActual++;
     }
+  } 
 }

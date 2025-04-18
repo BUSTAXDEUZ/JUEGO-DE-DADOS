@@ -9,6 +9,7 @@ package gamepack;
 /**
  * Implementación de una lista doblemente enlazada circular para la bitácora de cada jugador.
  */
+
 public class ListaDobleCircular {
     private NodoDoble cabeza;
     private NodoDoble ultimo;
@@ -18,10 +19,6 @@ public class ListaDobleCircular {
         this.ultimo = null;
     }
 
-        /**
-     * Inserta un nuevo nodo con la posición alcanzada en la lista doble circular.
-     * @param posicion La posición alcanzada.
-     */
     public void insertar(int posicion) {
         NodoDoble nuevo = new NodoDoble(posicion, "Sin descripción"); // Se agrega un valor por defecto
 
@@ -39,13 +36,6 @@ public class ListaDobleCircular {
         }
     }
 
-    /**
-     * Imprime el historial de movimientos del jugador.
-     * @return Historial en formato de cadena.
-     */
-        /**
-     * Muestra la lista de posiciones registradas.
-     */
     public void mostrarLista() {
         if (cabeza == null) {
             javax.swing.JOptionPane.showMessageDialog(null, "No hay movimientos en el historial.");
@@ -56,7 +46,7 @@ public class ListaDobleCircular {
         NodoDoble actual = cabeza;
 
         do {
-            historial.append("Posición: ").append(actual.getPosicion())  // Se reemplazó getDato() por getPosicion()
+            historial.append("Posición: ").append(actual.getPosicion()) // Se reemplazó getDato() por getPosicion()
                     .append(" - ").append(actual.getDescripcion()).append("\n");
             actual = actual.getSiguiente();
         } while (actual != cabeza);

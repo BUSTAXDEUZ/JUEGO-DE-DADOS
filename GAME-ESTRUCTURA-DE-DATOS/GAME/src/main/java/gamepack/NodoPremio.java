@@ -9,6 +9,7 @@ package gamepack;
 /**
  * Nodo para la pila de premios y castigos.
  */
+
 public class NodoPremio {
     String valor;
     NodoPremio siguiente;
@@ -33,7 +34,4 @@ public class NodoPremio {
     public void setSiguiente(NodoPremio siguiente) {
         this.siguiente = siguiente;
     }
-    
-    
 }
-

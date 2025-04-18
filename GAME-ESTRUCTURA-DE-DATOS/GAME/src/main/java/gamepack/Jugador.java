@@ -6,21 +6,18 @@ package gamepack;
  * 
  * @author Bustax, Chelo, Bryan
  */
+
 public class Jugador {
     private String nombre;
     private int posicion;
     private ListaDobleMovimientos historial;
-    private ListaCircular Estado;
+    private ListaCircular estado;
 
-    /**
-     * Constructor del jugador.
-     * @param nombre Nombre del jugador.
-     */
     public Jugador(String nombre) {
         this.nombre = nombre;
         this.posicion = 1; // Inicia en la posición 1
         this.historial = new ListaDobleMovimientos();
-        this.Estado = new ListaCircular();
+        this.estado = new ListaCircular();
     }
 
     public String getNombre() {
@@ -36,16 +33,11 @@ public class Jugador {
         historial.agregarMovimiento(nuevaPosicion, "Movimiento del carro");
     }
 
-    /**
-     * Muestra el historial de movimientos del jugador.
-     */
     public void verHistorial() {
         historial.verHistorial();
-        
     }
-    
+
     public void verEstado() {
-        Estado.mostrarEstadoJuego();  
+        estado.mostrarEstadoJuego();
     }
-    
 }

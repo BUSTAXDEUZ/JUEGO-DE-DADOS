@@ -6,17 +6,13 @@ package gamepack;
  * 
  * @author Bustax, Chelo, Bryan
  */
+
 public class NodoDoble {
     private int posicion;
     private String descripcion;
     private NodoDoble siguiente;
     private NodoDoble anterior;
 
-    /**
-     * Constructor del nodo doble.
-     * @param posicion Posición alcanzada en el tablero.
-     * @param descripcion Descripción del movimiento (premio/castigo).
-     */
     public NodoDoble(int posicion, String descripcion) {
         this.posicion = posicion;
         this.descripcion = descripcion;
@@ -48,5 +44,3 @@ public class NodoDoble {
         this.anterior = anterior;
     }
 }
-
-

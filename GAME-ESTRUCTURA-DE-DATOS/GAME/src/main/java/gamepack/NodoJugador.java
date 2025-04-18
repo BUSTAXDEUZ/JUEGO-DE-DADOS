@@ -9,6 +9,7 @@ package gamepack;
 /**
  * Nodo para la Cola de Jugadores.
  */
+
 public class NodoJugador {
     Jugador jugador;
     NodoJugador siguiente;
@@ -33,7 +34,4 @@ public class NodoJugador {
     public void setSiguiente(NodoJugador siguiente) {
         this.siguiente = siguiente;
     }
-    
-    
 }
-

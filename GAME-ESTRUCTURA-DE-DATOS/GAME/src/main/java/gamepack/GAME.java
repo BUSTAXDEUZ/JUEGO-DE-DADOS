@@ -155,31 +155,49 @@ public class GAME {
     }
 
     private static void mostrarAyuda() {
-        Object[] ayudaOpciones = {"Cómo Jugar", "Chatbot", "Volver"};
-        int ayudaOpcion = JOptionPane.showOptionDialog(null,
-                "CÓMO JUGAR: \n" +
-                        "1. Seleccione la cantidad de jugadores (máximo 4).\n" +
-                        "2. Cada jugador lanza dos dados.\n" +
-                        "3. Se suma el resultado de los dados para avanzar en el tablero.\n" +
-                        "4. Si el número es par, recibe un premio.\n" +
-                        "5. Si el número es impar, recibe un castigo.\n" +
-                        "6. Si el castigo es -1, el jugador regresa a la posición 1.\n" +
-                        "7. El primer jugador en llegar a la meta gana.\n\n" +
-                        "DESARROLLADO POR:\n" +
-                        "Bryan, Bustax y Chelo\n" +
-                        "Versión: " + VERSION,
-                "Ayuda - Juego de Dados",
-                JOptionPane.DEFAULT_OPTION,
-                JOptionPane.INFORMATION_MESSAGE,
-                null,
-                ayudaOpciones,
-                ayudaOpciones[0]);
+    Object[] ayudaOpciones = {"FAQ", "Chatbot", "Volver"};
+    int ayudaOpcion = JOptionPane.showOptionDialog(
+        null,
+        "CÓMO JUGAR: \n" +
+        "1. Seleccione la cantidad de jugadores (máximo 4).\n" +
+        "2. Cada jugador lanza dos dados.\n" +
+        "3. Se suma el resultado de los dados para avanzar en el tablero.\n" +
+        "4. Si el número es par, recibe un premio.\n" +
+        "5. Si el número es impar, recibe un castigo.\n" +
+        "6. Si el castigo es -1, el jugador regresa a la posición 1.\n" +
+        "7. El primer jugador en llegar a la meta gana.\n\n" +
+        "DESARROLLADO POR:\n" +
+        "Bryan, Bustax y Chelo\n" +
+        "Versión: " + VERSION,
+        "Ayuda - Juego de Dados",
+        JOptionPane.DEFAULT_OPTION,
+        JOptionPane.INFORMATION_MESSAGE,
+        null,
+        ayudaOpciones,
+        ayudaOpciones[0]
+    );
 
-        if (ayudaOpcion == 1) {
-            Chatbot chatbot = new Chatbot(); // Crear instancia del Chatbot
-            chatbot.mostrarMenu(); // Mostrar menú del Chatbot
-        }
+    if (ayudaOpcion == 0) { // FAQ
+        JOptionPane.showMessageDialog(
+            null,
+            "PREGUNTAS FRECUENTES (FAQ):\n\n" +
+            "¿Cuántos jugadores pueden participar?\n" +
+            "- Hasta 4 jugadores.\n\n" +
+            "¿Qué pasa si obtengo un número impar?\n" +
+            "- Recibís un castigo, que puede ser retroceder o volver al inicio.\n\n" +
+            "¿Cómo gano el juego?\n" +
+            "- Llegando a la meta antes que los demás.\n\n" +
+            "¿Qué tipo de premios existen?\n" +
+            "- Puedes avanzar posiciones o recibir bonificaciones especiales.\n",
+            "FAQ - Juego de Dados",
+            JOptionPane.INFORMATION_MESSAGE
+        );
+    } else if (ayudaOpcion == 1) { // Chatbot
+        Chatbot chatbot = new Chatbot(); // Crear instancia del Chatbot
+        chatbot.mostrarMenu(); // Mostrar menú del Chatbot
     }
+}
+
 
     private static void editarJugadores() {
         int opcion;

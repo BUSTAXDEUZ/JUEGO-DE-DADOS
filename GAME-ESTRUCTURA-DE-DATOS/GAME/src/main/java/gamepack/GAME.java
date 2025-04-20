@@ -10,7 +10,6 @@ import java.util.Random;
  * @author Bryan, Bustax, Chelo
  * @version 2.1.8
  */
-
 public class GAME {
     private static ColaJugadores jugadores = new ColaJugadores();
     private static PilaPremios premios = new PilaPremios();
@@ -156,7 +155,8 @@ public class GAME {
     }
 
     private static void mostrarAyuda() {
-        JOptionPane.showMessageDialog(null,
+        Object[] ayudaOpciones = {"Cómo Jugar", "Chatbot", "Volver"};
+        int ayudaOpcion = JOptionPane.showOptionDialog(null,
                 "CÓMO JUGAR: \n" +
                         "1. Seleccione la cantidad de jugadores (máximo 4).\n" +
                         "2. Cada jugador lanza dos dados.\n" +
@@ -169,7 +169,16 @@ public class GAME {
                         "Bryan, Bustax y Chelo\n" +
                         "Versión: " + VERSION,
                 "Ayuda - Juego de Dados",
-                JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.DEFAULT_OPTION,
+                JOptionPane.INFORMATION_MESSAGE,
+                null,
+                ayudaOpciones,
+                ayudaOpciones[0]);
+
+        if (ayudaOpcion == 1) {
+            Chatbot chatbot = new Chatbot(); // Crear instancia del Chatbot
+            chatbot.mostrarMenu(); // Mostrar menú del Chatbot
+        }
     }
 
     private static void editarJugadores() {
@@ -246,24 +255,6 @@ public class GAME {
         estadoActual.mostrarEstadoJuego(); // Llamar al método de ListaCircular para mostrar el estado
     }
 
-    private static void verHistorialJugador() {
-        if (jugadores.estaVacia()) {
-            JOptionPane.showMessageDialog(null, "No hay jugadores en la partida.");
-            return;
-        }
-
-        // Mostrar el historial de todos los jugadores
-        ListaDobleCircular bitacora = new ListaDobleCircular();
-
-        NodoJugador actual = jugadores.frente;
-        while (actual != null) {
-            bitacora.insertar(actual.jugador.getPosicion());
-            actual = actual.siguiente;
-        }
-
-        bitacora.mostrarLista(); // Mostrar el historial
-    }
-
     private static void editarPartida() {
         Object[] opcionesIngreso = {"Sí", "No"};
         int permitirIngreso = JOptionPane.showOptionDialog(null,
@@ -296,4 +287,21 @@ public class GAME {
             JOptionPane.showMessageDialog(null, "No se seleccionó ninguna posición máxima.");
         }
     }
+    private static void verHistorialJugador() {
+        if (jugadores.estaVacia()) {
+            JOptionPane.showMessageDialog(null, "No hay jugadores en la partida.");
+            return;
+        }
+
+    // Mostrar el historial de todos los jugadores
+        ListaDobleCircular bitacora = new ListaDobleCircular();
+
+        NodoJugador actual = jugadores.frente;
+        while (actual != null) {
+            bitacora.insertar(actual.jugador.getPosicion());
+            actual = actual.siguiente;
+        }
+
+    bitacora.mostrarLista(jugadores); // Pasar la cola de jugadores como parámetro
+}
 }

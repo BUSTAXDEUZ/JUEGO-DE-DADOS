@@ -6,10 +6,11 @@ package gamepack;
  * @author Fabia
  */
 
+import javax.swing.JOptionPane;
+
 /**
  * Implementación de una lista doblemente enlazada circular para la bitácora de cada jugador.
  */
-
 public class ListaDobleCircular {
     private NodoDoble cabeza;
     private NodoDoble ultimo;
@@ -36,9 +37,9 @@ public class ListaDobleCircular {
         }
     }
 
-    public void mostrarLista() {
+    public void mostrarLista(ColaJugadores jugadores) { // Aceptar la cola de jugadores como parámetro
         if (cabeza == null) {
-            javax.swing.JOptionPane.showMessageDialog(null, "No hay movimientos en el historial.");
+            JOptionPane.showMessageDialog(null, "No hay movimientos en el historial.");
             return;
         }
 
@@ -46,11 +47,32 @@ public class ListaDobleCircular {
         NodoDoble actual = cabeza;
 
         do {
-            historial.append("Posición: ").append(actual.getPosicion()) // Se reemplazó getDato() por getPosicion()
-                    .append(" - ").append(actual.getDescripcion()).append("\n");
+            // Buscar el jugador que tiene esa posición
+            Jugador jugador = buscarJugadorEnPosicion(actual.getPosicion(), jugadores);
+
+            if (jugador != null) {
+                historial.append("Posición: ").append(actual.getPosicion())
+                        .append(" - ").append(jugador.getNombre()).append("\n");
+            } else {
+                historial.append("Posición: ").append(actual.getPosicion())
+                        .append(" - Sin jugador asignado\n");
+            }
+
             actual = actual.getSiguiente();
         } while (actual != cabeza);
 
-        javax.swing.JOptionPane.showMessageDialog(null, historial.toString(), "Historial", javax.swing.JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(null, historial.toString(), "Historial", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    // Método para buscar el jugador que tiene una posición específica
+    private Jugador buscarJugadorEnPosicion(int posicion, ColaJugadores jugadores) {
+        NodoJugador actual = jugadores.frente; // Acceder a la lista de jugadores
+        while (actual != null) {
+            if (actual.jugador.getPosicion() == posicion) {
+                return actual.jugador;
+            }
+            actual = actual.siguiente;
+        }
+        return null; // Si no se encuentra el jugador, devuelve null
     }
 }

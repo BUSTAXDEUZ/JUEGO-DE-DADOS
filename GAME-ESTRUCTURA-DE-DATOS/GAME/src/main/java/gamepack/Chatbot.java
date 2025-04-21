@@ -17,7 +17,7 @@ public class Chatbot {
 
         do {
             pregunta = JOptionPane.showInputDialog(null, 
-                "Hazme una pregunta sobre el juego (escribe 'salir' para terminar):",
+                "Hazme una pregunta sobre el juego (ej. participar, par, impar, ganar) (escribe 'salir' para terminar):",
                 "Chatbot - Juego de Dados",
                 JOptionPane.QUESTION_MESSAGE);
 
